@@ -131,6 +131,7 @@
 				isDetail: false,		//详情弹框默认不显示
 				obj: {},				//传递个子组件的详情
 				isPage: true,			//传递给子组件的，立即发表按钮显示
+				id: "",					//点击的某一个id
 			}
 		},
 		created(){
@@ -153,6 +154,7 @@
 			},
 			//点击某一项展示详情框
 			showDetail(group,id){
+				this.id = id;				//赋值id
 				this.seltab = group;		//传递给子组件的tab
 				//获取草稿详情
 				resource.getDraftDetail({id:id}).then(res => {
@@ -168,10 +170,25 @@
 				});
 			},
 			//子组件操作成功后的回调
-			callback(){
-				this.isDetail = false;
-				//刷新列表
-				this.getDraftList();
+			callback(val){
+				if(val == "0"){
+					//获取草稿箱列表
+					this.getDraftList();
+					this.isDetail = false;
+				}else if(val == '1'){
+					resource.deleteDraft({id:this.id}).then(res => {
+						if(res.data.code == "0"){
+							//获取草稿箱列表
+							this.getDraftList();
+							this.isDetail = false;
+						}else{
+							this.$message({
+								type: 'error',
+								message: res.data.msg
+							});
+						}
+					});
+				}
 			},
 			//点击某一项的删除
 			deleteItem(id){
@@ -195,7 +212,6 @@
 							});
 						}
 					});
-					
 				}).catch(() => {
 					this.$message({
 						type: 'info',

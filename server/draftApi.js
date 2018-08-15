@@ -110,16 +110,15 @@ app.post('/updateDraft',(req, res) => {
     if(group == 0){
         let ishome = req.body.ishome;
         let isrecom = req.body.isrecom;
-        var values = [group,title,descs,pageimg,content,createdTime,ishome,isrecom,id];
-        console.log(values)
+        var values = [title,descs,pageimg,content,createdTime,ishome,isrecom,id];
         var sql = $sql.drafts.updateDraft0;
     }else if(group == 1){
         let author = req.body.author;
-        var values = [group,title,descs,pageimg,content,createdTime,author,id];
+        var values = [title,descs,pageimg,content,createdTime,author,id];
         var sql = $sql.drafts.updateDraft1;
     }else if(group == 2){
         let ishome = req.body.ishome;
-        var values = [group,title,descs,pageimg,content,createdTime,ishome,id];
+        var values = [title,descs,pageimg,content,createdTime,ishome,id];
         var sql = $sql.drafts.updateDraft2;
     }
     //根据sql语句对数据库进行查询

@@ -13,9 +13,9 @@ conn.connect();
 
 var app = express();
 
-// 我的日志列表
-app.get('/logList', (req, res) => { 
-    var sql = $sql.logs.logList;
+// 最近在读列表
+app.get('/readList', (req, res) => { 
+    var sql = $sql.readings.readList;
     //根据sql语句对数据库进行查询
     conn.query(sql, function(err, result) { 
         if (result) {
@@ -28,15 +28,15 @@ app.get('/logList', (req, res) => {
     });
 });
 
-// 添加我的日志
-app.post('/addLog',(req, res) => { 
-    let title = req.body.title;
+// 添加最近在读
+app.post('/addReading',(req, res) => { 
+    let name = req.body.name;
+    let author = req.body.author;
     let descs = req.body.descs;
+    let url = req.body.url;
     let pageimg = req.body.pageimg;
-    let content = req.body.content;
-    var createdTime = Date.parse(new Date());
-    var values = [[title,descs,pageimg,content,createdTime]];
-    var sql = $sql.logs.addLog;
+    var values = [[name,author,descs,url,pageimg]];
+    var sql = $sql.readings.addRead;
     //根据sql语句对数据库进行插入
     conn.query(sql,[values],function(err,result) {   
         if (result) {
@@ -44,16 +44,16 @@ app.post('/addLog',(req, res) => {
             res.send(response);
         }
         if (err) {       
-            var response = JSON.stringify({code:1,msg:"我的日志发表失败"});
+            var response = JSON.stringify({code:1,msg:"最近在读添加失败"});
             res.send(response);
         }  
     })
 });
 
-// 删除我的日志
-app.post('/deleteLog',(req, res) => {   
+// 删除最近在读
+app.post('/deleteRead',(req, res) => {   
     var id = req.body.id;
-    var sql = $sql.logs.delLog;
+    var sql = $sql.readings.delRead;
     var values = [[id]];
     //根据sql语句对数据库进行删除
     conn.query(sql,[values],function(err,result) {   
@@ -62,16 +62,16 @@ app.post('/deleteLog',(req, res) => {
             res.send(response);
         }
         if (err) {       
-            var response = JSON.stringify({code:1,msg:"删除失败"});
+            var response = JSON.stringify({code:1,msg:"书籍删除失败"});
             res.send(response);
         }  
     })
 });
 
-// 我的日志详情
-app.get('/getLogDetail',(req, res) => {   
+// 最近在读详情
+app.get('/getReadDetail',(req, res) => {   
     var id = req.query.id;
-    var sql = $sql.logs.logDetail;
+    var sql = $sql.readings.readDetail;
     var values = [[id]];
     //根据sql语句对数据库进行查询
     conn.query(sql,[values],function(err,result) {   
@@ -85,16 +85,16 @@ app.get('/getLogDetail',(req, res) => {
     })
 });
 
-// 修改我的日志
-app.post('/updateLog',(req, res) => {   
+// 修改最近在读
+app.post('/updateRead',(req, res) => {   
     var id = req.body.id;                   //id
-    var title = req.body.title;             //标题
-    var descs = req.body.descs;             //简介
-    var pageimg = req.body.pageimg;         //封面图
-    var createdTime = Date.parse(new Date());
-    var content = req.body.content;         //内容
-    var sql = $sql.logs.updateLog;
-    var values = [title,descs,pageimg,content,createdTime,id];
+    let name = req.body.name;
+    let author = req.body.author;
+    let descs = req.body.descs;
+    let url = req.body.url;
+    let pageimg = req.body.pageimg;
+    var values = [name,author,descs,url,pageimg,id];
+    var sql = $sql.readings.updateRead;
     //根据sql语句对数据库进行查询
     conn.query(sql,values,function(err,result) {   
         if (result) {

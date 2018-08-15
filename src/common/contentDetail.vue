@@ -12,7 +12,7 @@
 					<!-- 左侧 -->
 					<div class="left">
 						<!-- 选项 -->
-						<div class="switch" v-if="tabId == 0 || tabId == 2">
+						<div class="switch" v-if="tabId == 0">
 							<div class="contentItem">
 								<div class="isHome">首页：</div>
 								<el-switch v-model="scorllTop"
@@ -23,7 +23,7 @@
 								>
 							</el-switch>
 						</div>
-						<div class="contentItem" v-if="tabId == 0">
+						<div class="contentItem">
 							<div class="isHome">推荐：</div>
 							<el-switch v-model="recom"
 							active-color="#13ce66"
@@ -320,15 +320,14 @@
 						});
 					}else{
 						let obj = {
-							type:this.tabId,
-							scorlltop: this.scorllTop,
 							title: this.packDelTitle,
-							synopsis: this.subname,
+							descs: this.subname,
 							pageimg: this.showImg,
 							content:this.content
 						}
 						if(this.tabId == 0){
-							obj.recomm = this.recomm;
+							obj.ishome = this.scorllTop,
+							obj.isrecom = this.recom;
 						}
 						//提交接口
 						this.publicNow(obj);
@@ -361,12 +360,11 @@
 						});
 					}else{
 						let obj = {
-							type:this.tabId,
-							bookname: this.bookName,
+							title: this.packDelTitle,
 							author: this.author,
-							booksubname: this.bookSubname,
+							descs: this.subname,
 							pageimg: this.showImg,
-							content: this.content
+							content:this.content,
 						}
 						//提交接口
 						this.publicNow(obj);
@@ -375,12 +373,52 @@
 			},
 			//立即发表
 			publicNow(obj){
-				if(this.isPage == true){
-					console.log("草稿立即发表");
-				}else{
-					console.log("已发表修改保存");
+				if(this.tabId == 0){						//技术分享
+					resource.addShare(obj).then(res => {
+						if(res.data.code == "0"){
+							this.$emit("callback","1");
+							this.$message({
+								message: '发表成功',
+								type: 'success'
+							});
+						}else{
+							this.$message({
+								message: res.data.msg,
+								type: 'error'
+							});
+						}
+					});
+				}else if(this.tabId == 1){					//读书笔记
+					resource.addNote(obj).then(res => {
+						if(res.data.code == "0"){
+							this.$emit("callback","1");
+							this.$message({
+								message: '发表成功',
+								type: 'success'
+							});
+						}else{
+							this.$message({
+								message: res.data.msg,
+								type: 'error'
+							});
+						}
+					});
+				}else if(this.tabId == 2){					//我的日志
+					resource.addLog(obj).then(res => {
+						if(res.data.code == "0"){
+							this.$emit("callback","1");
+							this.$message({
+								message: '发表成功',
+								type: 'success'
+							});
+						}else{
+							this.$message({
+								message: res.data.msg,
+								type: 'error'
+							});
+						}
+					});
 				}
-				console.log(obj);
 			},
 			//点击保存
 			save(){
@@ -453,7 +491,6 @@
 					}
 				}else if(this.tabId == 2){				//我的日志
 					obj.id = this.contentObj.id;		//id
-					obj.ishome = this.scorllTop;		//首页
 					if(this.packDelTitle == ""){
 						this.$message({
 							message: '请填写标题',
@@ -488,13 +525,12 @@
 				if(this.status == true){		//草稿保存
 					obj.group = this.contentObj.group;
 					obj.id = this.contentObj.id;
-					console.log(obj);
 					resource.updateDraft(obj).then(res => {
 						if(res.data.code == "0"){
-							this.$emit("callback");
+							this.$emit("callback","0");
 							this.$message({
 								message: '草稿修改成功',
-								type: 'warning'
+								type: 'success'
 							});
 						}else{
 							this.$message({

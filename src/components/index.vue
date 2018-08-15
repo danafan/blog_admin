@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<div class="topBox">
-			<div class="userInfo">
+			<div class="userInfo" @click="exit">
 				<img class="userImg" src="../assets/loginBack.jpg">
-				<div class="username">范玉龙</div>
+				<div class="username">{{username}}</div>
 			</div>
 		</div>
 		<div class="content">
@@ -119,16 +119,38 @@
 
 </style>
 <script>
+	import resource from '../api/resource.js'
 	export default{
 		data(){
 			return {
 				active: 'publication',
+				username:"",		
 			}
 		},
 		created(){
-			var query = this.$route.fullPath;
-			var a = query.split("/").join("");
-			this.active = a;
+			this.$router.push('/' + this.active);
+			this.username = sessionStorage.getItem("username");
 		},
+		methods:{
+			exit(){
+				this.$confirm('确认退出?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				resource.exit().then(res => {
+					if(res.data.code == "0"){
+						this.$message.success("退出成功");
+						this.$router.push('/login');
+					}
+				});
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '取消退出'
+				});          
+			});
+			}
+		}
 	}
 </script>

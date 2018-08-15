@@ -12,7 +12,7 @@
 					<!-- 左侧 -->
 					<div class="left">
 						<!-- 选项 -->
-						<div class="switch" v-if="tabId == 0 || tabId == 2">
+						<div class="switch" v-if="tabId == 0">
 							<div class="contentItem">
 								<div class="isHome">首页：</div>
 								<el-switch v-model="ishome"
@@ -23,7 +23,7 @@
 								>
 							</el-switch>
 						</div>
-						<div class="contentItem" v-if="tabId == 0">
+						<div class="contentItem">
 							<div class="isHome">推荐：</div>
 							<el-switch v-model="isrecom"
 							active-color="#13ce66"
@@ -323,13 +323,13 @@
 						});
 					}else{
 						let obj = {
-							ishome: this.ishome,
 							title: this.title,
 							descs: this.descs,
 							pageimg: this.showImg,
 							content:this.content
 						}
 						if(this.tabId == 0){
+							obj.ishome = this.ishome,
 							obj.isrecom = this.isrecom;
 						}
 						//提交接口
@@ -468,9 +468,6 @@
 					}
 					if(this.tabId == 1){
 						obj.author = this.author;
-					}
-					if(this.tabId == 2){
-						obj.ishome = this.ishome;
 					}
 					this.pushrough(obj);
 				}

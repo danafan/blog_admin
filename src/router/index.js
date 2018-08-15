@@ -20,7 +20,7 @@ export default new Router({
       component: login
     },
     {
-      path: '/',
+      path: '/index',
       component: index,
       children:[
       { path: '/publication', component: publication},

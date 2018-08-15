@@ -10,7 +10,7 @@
 				<img class="icon" src="../assets/password.png">
 				<input type="password" placeholder="请输入密码" v-model="password">
 			</div>
-			<div class="login">登录</div>
+			<div class="login" @click="login">登录</div>
 		</div>
 	</div>
 </template>
@@ -89,11 +89,37 @@
 }
 </style>
 <script>
+	import resource from '../api/resource.js'
 	export default{
 		data(){
 			return{
 				username:"",			//用户名
 				password: "",			//密码
+			}
+		},
+		methods:{
+			login(){
+				if(this.username == ""){
+					this.$message.warning("请输入用户名");
+				}else if(this.password == ""){
+					this.$message.warning("请输入密码");
+				}else{
+					let userObj = {
+						username: this.username,
+						password: this.password
+					}
+					resource.login(userObj).then(res => {
+						if(res.data.code == "0"){
+							this.$message.success("登录成功");
+							//获取返回的用户信息传递到主页
+							let userObj = res.data.data[0];
+							sessionStorage.setItem("username",userObj.username);
+							this.$router.push('/index');
+						}else{
+							this.$message.error(res.data.msg);
+						};
+					});
+				}
 			}
 		}
 	}

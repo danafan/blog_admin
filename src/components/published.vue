@@ -372,7 +372,6 @@
 							if (res.data.code == "0") {
 								//刷新技术分享列表
 								this.getShares();
-								this.getNote();
 								this.$message({
 									type: 'success',
 									message: '删除成功!'

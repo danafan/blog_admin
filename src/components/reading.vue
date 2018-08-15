@@ -2,20 +2,21 @@
 	<div>
 		<div class="readingBox">
 			<div class="bookItem" v-for="(item,index) in books" @mouseenter="show(index)" @mouseleave="hide(index)">
-				<img class="bookIcon" src="../assets/loginBack.jpg">
-				<div class="model" v-if="item.default == true" @click="deletes(item.id)">
-					<img src="../assets/detele.png">
+				<img class="bookIcon" :src="baseUrl + item.pageimg">
+				<div class="model" v-if="item.default">
+					<div class="look" @click="getDetail(item.id)">查看详情</div>
+					<div class="delete" @click="deletes(item.id)">删除</div>
 				</div>
 			</div>
-			<div class="addBook" @click="addBookShow = true">
+			<div class="addBook" @click="addbook">
 				<img class="addIcon" src="../assets/add.png">
 				<div class="addbook">添加书籍</div>
 			</div>
 		</div>
-		<!-- 添加数据弹框 -->
-		<div class="addModel" v-if="addBookShow == true" @click="addBookShow = false">
+		<!-- 详情弹框 -->
+		<div class="addModel" v-if="addBookShow == true">
 			<div class="addBox" @click.stop>
-				<div class="title">添加书籍</div>
+				<div class="title">{{title}}<img src="../assets/close.png" @click="addBookShow = false"></div>
 				<div class="top">
 					<div class="left">
 						<el-form label-width="70px">
@@ -25,6 +26,9 @@
 							<el-form-item label="作者：">
 								<el-input v-model="author" placeholder="作者"></el-input>
 							</el-form-item>
+							<el-form-item label="链接：">
+								<el-input v-model="url" placeholder="链接"></el-input>
+							</el-form-item>
 							<el-form-item label="简介">
 								<el-input type="textarea" :rows="4" placeholder="简介。。。" v-model="subname"></el-input>
 							</el-form-item>
@@ -33,7 +37,7 @@
 					<!-- 右侧封面图 -->
 					<div class="pageImg">
 						<div class="showimg" v-if="showImg != ''" @mouseenter="showDetele = true" @mouseleave="showDetele = false">
-							<img class="img" :src="showImg">
+							<img class="img" :src="baseUrl + showImg">
 							<div class="modal" v-if="showDetele == true">
 								<img src="../assets/detele.png" @click="detele">
 							</div>
@@ -46,7 +50,6 @@
 					<div class="but" @click="addBookShow = false">取消</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
 </template>
@@ -69,18 +72,27 @@
 			height: 100%;
 		}
 		.model{
-			border-radius: 0 .08rem .08rem 0;
+			border-radius: 0 0 .08rem 0;
 			background: rgba(0,0,0,.6);
 			position: absolute;
+			bottom: 0;
+			left: 0;
 			width: 100%;
-			height: 100%;
+			height: .4rem;
 			display:flex;
 			align-items: center;
-			justify-content:center;
-			img{
-				width: .8rem;
-				height: .9rem;
+			justify-content:space-between;
+			padding-right: .2rem;
+			padding-left: .2rem;
+			font-size: 14px;
+			color: #fff;
+			.look:hover{
+				color: #38A1F3;
 			}
+			.delete:hover{
+				color: #38A1F3;				
+			}
+			
 		}
 	}
 	.addBook{
@@ -122,6 +134,7 @@
 		width: 6rem;
 		padding-bottom: .3rem;
 		.title{
+			position: relative;
 			margin-bottom: .3rem;
 			background: #141E30;
 			width: 100%;
@@ -130,6 +143,14 @@
 			line-height: .5rem;
 			font-size:16px;
 			color: #fff;
+			img{
+				width: .3rem;
+				height: .3rem;
+				position: absolute;
+				top: 50%;
+				transform: translate(-50%,-50%);
+				right: .02rem;
+			}
 		}
 		.top{
 			padding-left: .2rem;
@@ -194,30 +215,44 @@
 }
 </style>
 <script>
+	import resource from '../api/resource.js'
 	import uploadimg from '../common/uploadimg.vue'
 	export default{
 		data(){
 			return{
-				books:[
-				{img:require('../assets/loginBack.jpg'),default:false,id:1},
-				{img:require('../assets/loginBack.jpg'),default:false,id:2},
-				{img:require('../assets/loginBack.jpg'),default:false,id:3},
-				{img:require('../assets/loginBack.jpg'),default:false,id:4},
-				{img:require('../assets/loginBack.jpg'),default:false,id:5},
-				],
+				books:[],				//最近在读列表
 				addBookShow: false,		//默认添加书籍弹框不显示
 				bookName: "",			//书名
 				author:"",				//作者
+				url: "",				//链接
 				subname: "",			//简介
-				imgObj: {},				//向后台传递的图片对象
 				showImg:"",				//预览的图片
 				showDetele: false,		//默认删除弹框不显示
-			}
+				title: "添加书籍",		//详情标题
+				id:"",					//点击的书籍id
+			}	
+		},
+		created(){
+			//获取最近在读列表
+			this.getReading();
 		},
 		methods:{
+			//获取最近在读列表
+			getReading(){
+				resource.getReadList().then(res => {
+					if(res.data.code == "0"){
+						this.books = res.data.data;
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'error'
+						});
+					}
+				});
+			},
 			//鼠标移入
 			show(index){
-				this.books[index].default = true;
+				this.$set(this.books[index],'default',true);
 			},
 			//鼠标移出
 			hide(index){
@@ -225,22 +260,32 @@
 			},
 			//图片上传成功的方法
 			callbackFn(val){
-				for(let i = 0;i < val.length;i ++){
-					let obj = val[i];
-					this.imgObj = obj;
-					let fr = new FileReader();
-					let _this = this;
-					fr.onload=function () {
-						let result = this.result;
-						_this.showImg = result;
-					};
-					fr.readAsDataURL(obj);
-				}
+				this.showImg = val;
 			},
 			//点击删除图片
 			detele(){
-				this.imgObj = {};					//清空向后台传递的图片对象
-				this.showImg = "";					//清空预览的图片
+				this.showImg = "";					
+			},
+			//点击查看详情
+			getDetail(id){
+				this.addBookShow = true;			//展示添加弹框
+				this.title = "书籍详情";				//修改标题
+				this.id = id;						//id赋值
+				resource.getReadDetail({id:id}).then(res => {
+					if(res.data.code == "0"){
+						let obj = res.data.data[0];
+						this.bookName = obj.name;			//书名
+						this.author = obj.author;			//作者
+						this.url = obj.url;					//链接
+						this.subname = obj.descs;			//简介
+						this.showImg = obj.pageimg;			//预览的图片
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'error'
+						});
+					}
+				})
 			},
 			//点击删除
 			deletes(id){
@@ -250,11 +295,22 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
+					resource.deleteRead({id:id}).then(res => {
+						if(res.data.code == "0"){
+							//获取最近在读列表
+							this.getReading();
+							this.$message({
+								type: 'success',
+								message: '书籍删除成功!'
+							});
+						}else{
+							this.$message({
+								type: 'error',
+								message: res.data.msg
+							});
+						}
 					});
-					console.log(id);
+					
 				}).catch(() => {
 					this.$message({
 						type: 'info',
@@ -262,7 +318,12 @@
 					});          
 				});
 			},
-			//点击添加书籍确定
+			//点击添加书籍
+			addbook(){
+				this.addBookShow = true;			//展示添加弹框
+				this.title = "添加书籍";				//修改标题
+			},
+			//点击添加或修改书籍确定
 			ok(){
 				if(this.bookName == ""){
 					this.$message({
@@ -272,6 +333,11 @@
 				}else if(this.author == ""){
 					this.$message({
 						message: '请输入作者',
+						type: 'warning'
+					});
+				}else if(this.url == ""){
+					this.$message({
+						message: '请输入链接',
 						type: 'warning'
 					});
 				}else if(this.showImg == ""){
@@ -288,10 +354,47 @@
 					let obj = {
 						name: this.bookName,
 						author:this.author,
-						subname: this.subname,
-						pageimg:this.imgObj
+						url:this.url,
+						descs: this.subname,
+						pageimg:this.showImg
 					}
-					console.log(obj);
+					if(this.title == "添加书籍"){					//添加书籍
+						resource.addReading(obj).then(res => {
+							if(res.data.code == "0"){
+								//获取最近在读列表
+								this.getReading();
+								this.addBookShow = false;
+								this.$message({
+									message: '书籍添加成功',
+									type: 'success'
+								});
+							}else{
+								this.$message({
+									message: res.data.msg,
+									type: 'error'
+								});
+							}
+						});
+					}else{										//修改书籍
+						obj.id = this.id;
+						resource.updateRead(obj).then(res => {
+							if(res.data.code == "0"){
+								//获取最近在读列表
+								this.getReading();
+								this.addBookShow = false;
+								this.$message({
+									message: '书籍修改成功',
+									type: 'success'
+								});
+							}else{
+								this.$message({
+									message: res.data.msg,
+									type: 'error'
+								});
+							}
+						});
+					}
+					
 				}
 			}
 		},

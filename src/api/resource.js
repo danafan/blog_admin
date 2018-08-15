@@ -1,7 +1,8 @@
 import http from './request.js'
 let path = {	
-	//login: "login",						//用户登录
-	//exit: "exit",							//用户退出
+	state: "state",						//判断用户状态
+	login: "login",						//用户登录
+	exit: "exit",							//用户退出
 	uploadImg: 'uploadImg',					//上传图片
 	getShares:"shareList",					//获取所有技术分享列表
 	addShare:"addShare",					//插入技术分享
@@ -23,16 +24,25 @@ let path = {
 	deleteDraft:"deleteDraft",				//删除草稿
 	getDraftDetail: "getDraftDetail",		//草稿箱详情
 	updateDraft: "updateDraft",				//修改草稿
+	getReadList: "readList",				//最近在读列表
+	addReading: "addReading",				//添加最近在读
+	getReadDetail: "getReadDetail",			//查看最近在读
+	updateRead: "updateRead",				//修改最近在读
+	deleteRead:"deleteRead",				//删除最近在读
 }
 export default{
+	//判断用户状态
+	state(params){
+		return http.get(path.state, params)
+	},
 	//用户登录
-	// login(params){
-	// 	return http.post(path.login, params)
-	// },
-	//用户登录
-	// exit(params){
-	// 	return http.get(path.exit, params)
-	// },
+	login(params){
+		return http.post(path.login, params)
+	},
+	//用户退出
+	exit(params){
+		return http.get(path.exit, params)
+	},
 	// 上传图片
 	uploadImg(params){
 		return http.img(path.uploadImg, params)
@@ -116,5 +126,25 @@ export default{
 	//修改草稿
 	updateDraft(params){
 		return http.post(path.updateDraft, params)
+	},
+	//最近在读列表
+	getReadList(params){
+		return http.get(path.getReadList, params)
+	},
+	//添加最近在读
+	addReading(params){
+		return http.post(path.addReading, params)
+	},
+	//查看最近在读
+	getReadDetail(params){
+		return http.get(path.getReadDetail, params)
+	},
+	//修改最近在读
+	updateRead(params){
+		return http.post(path.updateRead, params)
+	},
+	//删除最近在读
+	deleteRead(params){
+		return http.post(path.deleteRead, params)
 	},
 }
