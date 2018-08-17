@@ -29,6 +29,9 @@ let path = {
 	getReadDetail: "getReadDetail",			//查看最近在读
 	updateRead: "updateRead",				//修改最近在读
 	deleteRead:"deleteRead",				//删除最近在读
+	messageList:"messageList",				//获取留言列表
+	getMessageDetail:"getMessageDetail",	//获取留言详情
+	deleteMessage: "deleteMessage",			//删除留言
 }
 export default{
 	//判断用户状态
@@ -146,5 +149,17 @@ export default{
 	//删除最近在读
 	deleteRead(params){
 		return http.post(path.deleteRead, params)
+	},
+	//获取留言列表
+	messageList(params){
+		return http.get(path.messageList, params)
+	},
+	//获取留言详情
+	getMessageDetail(params){
+		return http.get(path.getMessageDetail, params)
+	},
+	//删除留言
+	deleteMessage(params){
+		return http.post(path.deleteMessage, params)
 	},
 }

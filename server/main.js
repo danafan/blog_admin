@@ -6,6 +6,7 @@ var noteApi = require('./noteApi');
 var logApi = require('./logApi');
 var draftApi = require('./draftApi');
 var readingApi = require('./readingApi');
+var messageApi = require('./messageApi');
 var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -53,6 +54,8 @@ app.use('/admin', logApi);
 app.use('/admin', draftApi);
 // 最近在读控制器
 app.use('/admin', readingApi);
+// 最近在读控制器
+app.use('/admin', messageApi);
 
 
 

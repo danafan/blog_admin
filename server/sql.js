@@ -5,7 +5,7 @@ var sqlMap = {
     },
     // 技术分享
     shares: {
-        shareList: 'select * from shares',														                                             //技术分享列表
+        shareList: 'select * from shares order by id desc limit ?,5',														                                             //技术分享列表
         addShare: 'insert into shares(`title`,`descs`,`pageimg`,`content`,`createdTime`,`ishome`,`isrecom`) values ?',		                 //添加技术分享
         delShare: 'delete from shares where id = ?',												                                         //删除技术分享
         shareDetail: 'select * from shares where id = ?',		                                                                             //技术分享详情
@@ -13,7 +13,7 @@ var sqlMap = {
     },
     // 读书笔记
     notes: {
-        noteList: 'select * from notes',                                                                                                     //读书笔记列表
+        noteList: 'select * from notes order by id desc limit ?,5',                                                                                                     //读书笔记列表
         addNote: 'insert into notes(`title`,`author`,`descs`,`pageimg`,`content`,`createdTime`) values ?',                                   //添加读书笔记
         delNote: 'delete from notes where id = ?',                                                                                           //删除读书笔记
         noteDetail: 'select * from notes where id = ?',                                                                                      //读书笔记详情
@@ -21,7 +21,7 @@ var sqlMap = {
     },
     // 我的日志
     logs: {
-        logList: 'select * from logs',                                                                                                       //读书笔记列表
+        logList: 'select * from logs order by id desc limit ?,5',                                                                                                       //读书笔记列表
         addLog: 'insert into logs(`title`,`descs`,`pageimg`,`content`,`createdTime`) values ?',                                     //添加读书笔记
         delLog: 'delete from logs where id = ?',                                                                                             //删除读书笔记
         logDetail: 'select * from logs where id = ?',                                                                                        //读书笔记详情
@@ -46,6 +46,12 @@ var sqlMap = {
         delRead: 'delete from readings where id = ?',                                                                                             //删除读书笔记
         readDetail: 'select * from readings where id = ?',                                                                                        //读书笔记详情
         updateRead: 'update readings set name = ?,author = ?,descs = ?,url = ?,pageimg = ? where id = ?',                    //修改读书笔记
+    },
+    // 留言
+    message: {
+        messageList: 'select * from message order by id desc limit ?,8',                                                                      //留言列表
+        delMessage: 'delete from message where id = ?',                                                                                         //删除留言
+        messageDetail: 'select * from message where id = ?',                                                                                    //留言详情
     },
 }
 

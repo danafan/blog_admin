@@ -44,8 +44,9 @@
 			<el-pagination
 			background
 			layout="prev, pager, next"
-			:page-count="totalPages"
+			:total="total"
 			:pager-count="5"
+			:page-size="5"
 			@current-change = "currentChange">
 		</el-pagination>
 	</div>
@@ -242,7 +243,7 @@
 	export default{
 		data(){
 			return{
-				totalPages: 10,			//总页数
+				total: 0,				//总页数
 				page: 1,				//当前页码
 				seltab:-1,				//默认选中第一项
 				isDetail: false,		//默认详情弹框不显示
@@ -254,6 +255,7 @@
 		watch:{
 			seltab:function(n){
 				sessionStorage.setItem("seltab",n);
+				this.page = 1;
 				switch(n){
 					case 0:
 					this.getShares();
@@ -278,9 +280,10 @@
 		methods:{
 			//获取技术分享列表
 			getShares(){
-				resource.getShares().then(res => {
+				resource.getShares({page:this.page}).then(res => {
 					if(res.data.code == "0"){
 						this.list = res.data.data;
+						this.total = res.data.total;
 					}else{
 						this.$message({
 							message: res.data.msg,
@@ -291,9 +294,10 @@
 			},
 			//获取读书笔记列表
 			getNote(){
-				resource.getNoteList().then(res => {
+				resource.getNoteList({page:this.page}).then(res => {
 					if(res.data.code == "0"){
 						this.list = res.data.data;
+						this.total = res.data.total;
 					}else{
 						this.$message({
 							message: res.data.msg,
@@ -304,9 +308,10 @@
 			},
 			//获取我的日志列表
 			getLog(){
-				resource.logList().then(res => {
+				resource.logList({page:this.page}).then(res => {
 					if(res.data.code == "0"){
 						this.list = res.data.data;
+						this.total = res.data.total;
 					}else{
 						this.$message({
 							message: res.data.msg,
@@ -356,9 +361,19 @@
 				}
 			},
 			//点击切换页码
-			currentChange(){
+			currentChange(e){
 				this.page = e;
-				console.log(this.page);
+				switch(this.seltab){
+					case 0:
+					this.getShares();
+					break;
+					case 1:
+					this.getNote();
+					break;
+					case 2:
+					this.getLog();
+					break;
+				}
 			},
 			//点击某一项的删除
 			deleteItem(id){

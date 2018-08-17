@@ -16,10 +16,21 @@ var app = express();
 // 我的日志列表
 app.get('/logList', (req, res) => { 
     var sql = $sql.logs.logList;
+    var page = (req.query.page - 1)*5;
     //根据sql语句对数据库进行查询
-    conn.query(sql, function(err, result) { 
-        if (result) {
-            jsonWrite(res, result);
+    conn.query(sql,page,function(err, results) { 
+        if (results) {
+            let sql1 = 'select count(*) as count from logs';
+            conn.query(sql1,function(err, result) { 
+                if (result) {
+                    var response = JSON.stringify({code:0,total:result[0].count,data: results});
+                    res.send(response);
+                }
+                if (err) {       
+                    var response = JSON.stringify({code:1,msg:"技术分享列表获取失败"});
+                    res.send(response);
+                }    
+            });
         }
         if (err) {       
             var response = JSON.stringify({code:1,msg:"查询失败"});

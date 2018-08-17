@@ -379,6 +379,8 @@
 				if(this.tabId == 0){						//技术分享
 					resource.addShare(obj).then(res => {
 						if(res.data.code == "0"){
+							sessionStorage.setItem("seltab",0);
+							this.$router.push('/published');
 							this.$message({
 								message: '技术分享发表成功',
 								type: 'success'
@@ -393,6 +395,8 @@
 				}else if(this.tabId == 1){					//读书笔记
 					resource.addNote(obj).then(res => {
 						if(res.data.code == "0"){
+							sessionStorage.setItem("seltab",1);
+							this.$router.push('/published');
 							this.$message({
 								message: '读书心得发表成功',
 								type: 'success'
@@ -407,6 +411,8 @@
 				}else if(this.tabId == 2){					//我的日志
 					resource.addLog(obj).then(res => {
 						if(res.data.code == "0"){
+							sessionStorage.setItem("seltab",2);
+							this.$router.push('/published');
 							this.$message({
 								message: '我的日志发表成功',
 								type: 'success'
@@ -476,6 +482,7 @@
 			pushrough(obj){	
 				resource.addDraft(obj).then(res => {
 					if(res.data.code == "0"){
+						this.$router.push('/rough');
 						this.$message({
 							message: '成功加入草稿箱',
 							type: 'success'

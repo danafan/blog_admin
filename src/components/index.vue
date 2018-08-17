@@ -131,25 +131,32 @@
 			this.$router.push('/' + this.active);
 			this.username = sessionStorage.getItem("username");
 		},
+		watch:{
+			$route(to,from){
+				this.$router.push(to.path);
+				this.active = to.path.split("/")[1];
+			}
+		},
 		methods:{
+			//退出登录
 			exit(){
 				this.$confirm('确认退出?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				resource.exit().then(res => {
-					if(res.data.code == "0"){
-						this.$message.success("退出成功");
-						this.$router.push('/login');
-					}
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					resource.exit().then(res => {
+						if(res.data.code == "0"){
+							this.$message.success("退出成功");
+							this.$router.push('/login');
+						}
+					});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消退出'
+					});          
 				});
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '取消退出'
-				});          
-			});
 			}
 		}
 	}

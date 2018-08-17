@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<div class="messBox">
-			<div class="messItem" v-for="(item,index) in messList" @mouseenter="show(index)" @mouseleave="hide(index)" @click="isDetail(item.id)">
+			<div class="messItem" v-for="(item,index) in messList" @mouseenter="show(index)" @mouseleave="hide(index)" @click="getMessDetail(item.id)">
 				<div class="content">{{item.content}}</div>
 				<div class="setting" v-if="item.default">
-					<div class="time">发表时间：{{item.time}}</div>
-					<div class="delete" @click="deletes(item.id)">删除</div>
+					<div class="time">发表时间：{{item.createdTime | updateTime}}</div>
+					<div class="delete" @click.stop @click="deletes(item.id)">删除</div>
 				</div>
 			</div>
 		</div>
@@ -13,8 +13,9 @@
 			<el-pagination
 			background
 			layout="prev, pager, next"
-			:page-count="totalPages"
+			:total="total"
 			:pager-count="5"
+			:page-size="8"
 			@current-change = "currentChange">
 		</el-pagination>
 	</div>
@@ -22,15 +23,13 @@
 	<div class="isDetail" v-if="showDetail">
 		<img class="close" src="../assets/close.png" @click="showDetail = false">
 		<div class="detailBox">
-			<div class="conTxt">
-				阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈阿迪和饭卡阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈阿迪和饭卡阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈
-			</div>
+			<div class="conTxt">{{messObj.content}}</div>
 			<div class="info">
 				<div class="author">
-					来自：掩耳盗哑铃 的留言
+					来自：{{messObj.nickname}} 的留言
 				</div>
 				<div class="email">
-					邮箱：13067882143@163.com
+					邮箱：{{messObj.email}}
 				</div>
 			</div>
 		</div>
@@ -136,33 +135,63 @@
 }
 </style>
 <script>
+	import resource from '../api/resource.js'
 	export default{
 		data(){
 			return{
-				messList:[{default:false,content:"阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈阿迪和饭卡",time:"2018-03-21",id:0,username:"掩耳盗哑铃",email:"13067882143@163.com"},{default:false,content:"阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈",time:"2018-03-21",id:0,username:"掩耳盗哑铃",email:"13067882143@163.com"},{default:false,content:"阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈",time:"2018-03-21",id:0,username:"掩耳盗哑铃",email:"13067882143@163.com"},{default:false,content:"阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈",time:"2018-03-21",id:0,username:"掩耳盗哑铃",email:"13067882143@163.com"},{default:false,content:"阿迪和饭卡就收到话费卡世纪东方哈萨克将豆腐哈开始觉得发哈快速的减肥和快速的减肥哈速度快放假哈史蒂夫拉屎的话费卡世纪东方哈萨克的风景哈",time:"2018-03-21",id:0,username:"掩耳盗哑铃",email:"13067882143@163.com"}],
-				totalPages: 10,		//总条数
+				messList:[],		//留言列表
+				total: 0,			//总条数
 				page: 1,			//当前页数
 				showDetail: false,	//默认留言详情弹框不显示
+				messObj:{},			//留言详情
 			}
 		},
+		created(){
+			//获取留言板列表
+			this.getMessageList();
+		},
 		methods:{
+			//获取留言板列表
+			getMessageList(){
+				resource.messageList({page:this.page}).then(res => {
+					if(res.data.code == "0"){
+						this.messList = res.data.data;
+						this.total = res.data.total;
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'error'
+						}); 
+					}
+				});
+			},	
+			//获取留言详情
+			getMessDetail(id){
+				resource.getMessageDetail({id:id}).then(res => {
+					if(res.data.code == "0"){
+						this.showDetail = true;
+						this.messObj = res.data.data[0];
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'error'
+						});
+					}
+				});
+			},
 			//切换页码
 			currentChange(e){
 				this.page = e;
-				console.log(e);
+				//获取留言板列表
+				this.getMessageList();
 			},
 			//鼠标移入
 			show(index){
-				this.messList[index].default = true;
+				this.$set(this.messList[index],'default',true);
 			},
 			//鼠标移出
 			hide(index){
 				this.messList[index].default = false;
-			},
-			//点击查看详情
-			isDetail(id){
-				console.log(id);
-				this.showDetail = true;
 			},
 			//点击删除
 			deletes(id){
@@ -172,17 +201,40 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
+					resource.deleteMessage({id:id}).then(res => {
+						if(res.data.code == "0"){
+							//获取留言板列表
+							this.getMessageList();
+							this.$message({
+								type: 'success',
+								message: res.data.msg
+							});
+						}else{
+							this.$message({
+								type: 'error',
+								message: res.data.msg
+							});
+						}
 					});
-					console.log(id);
 				}).catch(() => {
 					this.$message({
 						type: 'info',
 						message: '已取消删除'
 					});          
 				});
+			}
+		},
+		filters:{
+			updateTime(time){
+				let times = parseInt(time);
+				var time = new Date(times);
+				var y = time.getFullYear();
+				var m = time.getMonth()+1;
+				var d = time.getDate();
+				var h = time.getHours();
+				var mm = time.getMinutes();
+				var s = time.getSeconds();
+				return y+'-'+m+'-'+d;
 			}
 		}
 	}
