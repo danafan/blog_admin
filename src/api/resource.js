@@ -32,6 +32,8 @@ let path = {
 	messageList:"messageList",				//获取留言列表
 	getMessageDetail:"getMessageDetail",	//获取留言详情
 	deleteMessage: "deleteMessage",			//删除留言
+	imgList:"imgList",						//获取所有图片
+	updateImg:"updateImg",					//修改图片
 }
 export default{
 	//判断用户状态
@@ -161,5 +163,13 @@ export default{
 	//删除留言
 	deleteMessage(params){
 		return http.post(path.deleteMessage, params)
+	},
+	//获取所有图片
+	imgList(params){
+		return http.get(path.imgList, params)
+	},
+	//修改图片
+	updateImg(params){
+		return http.post(path.updateImg, params)
 	},
 }

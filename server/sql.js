@@ -53,6 +53,11 @@ var sqlMap = {
         delMessage: 'delete from message where id = ?',                                                                                         //删除留言
         messageDetail: 'select * from message where id = ?',                                                                                    //留言详情
     },
+    // 图片管理
+    imgs: {
+        imgList: 'select * from imgs',                                                                                    //技术分享详情
+        updateImg: 'update imgs set imgurl = ? where id = ?',    //修改技术分享
+    },
 }
 
 module.exports = sqlMap;
