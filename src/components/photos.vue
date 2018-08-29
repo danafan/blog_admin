@@ -112,22 +112,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- 我的头像 -->
-		<div class="box">
-			<!-- 未上传 -->
-			<div class="imgBox" v-if="userimg == ''">
-				<div class="camera"><img src="../assets/Imgicon.png"></div>
-				<div class="add">上传图片</div>
-				<input type="file" ref="imgUpload8" class="upload_file" @change="uploadFn8" @click="tab = 8">
-			</div>
-			<!-- 已上传 -->
-			<div class="cardImg" v-else>
-				<img class="img" :src="baseUrl + userimg">
-				<div class="modal" @click="detele(8)">
-					<img src="../assets/close.png">
-				</div>
-			</div>
-		</div>
 	</div>
 </template>
 <style lang="less" scoped>
@@ -139,12 +123,12 @@
 	margin-right: .2rem;
 	margin-bottom: .2rem;
 	border-radius: .1rem; 
-	width: 2rem;
+	width: 2.7rem;
 	height: 2.2rem;
 	.cardImg{
 		border-radius: .1rem; 
 		position: relative;
-		width: 2rem;
+		width: 2.7rem;
 		height: 2.2rem;
 		.img{
 			border-radius: .1rem; 
@@ -155,7 +139,6 @@
 			height: 100%;
 		}
 		.modal{
-			background:rgba(0,0,0,.6);
 			position: absolute;
 			top: 0;
 			right: 0;
@@ -180,7 +163,7 @@
 		justify-content:center;
 		align-items:center;
 		background: #eeeeee;
-		width: 2rem;
+		width: 2.7rem;
 		height: 2.2rem;
 		.camera{
 			margin-bottom: .2rem;
@@ -348,32 +331,43 @@
 			},
 			//点击某一个删除
 			detele(index){
-				switch(index){
-					case 1:
-					this.Monday = "";
-					break;
-					case 2:
-					this.Tuesday = "";
-					break;
-					case 3:
-					this.Wednesday = "";
-					break;
-					case 4:
-					this.Thursday = "";
-					break;
-					case 5:
-					this.Friday = "";
-					break;
-					case 6:
-					this.Saturday = "";
-					break;
-					case 7:
-					this.Sunday = "";
-					break;
-					case 8:
-					this.userimg = "";
-					break;
-				}
+				this.$confirm('确认更换该背景?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					switch(index){
+						case 1:
+						this.Monday = "";
+						break;
+						case 2:
+						this.Tuesday = "";
+						break;
+						case 3:
+						this.Wednesday = "";
+						break;
+						case 4:
+						this.Thursday = "";
+						break;
+						case 5:
+						this.Friday = "";
+						break;
+						case 6:
+						this.Saturday = "";
+						break;
+						case 7:
+						this.Sunday = "";
+						break;
+						case 8:
+						this.userimg = "";
+						break;
+					}
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});          
+				});
 			}
 
 		}

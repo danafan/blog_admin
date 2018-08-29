@@ -35,7 +35,7 @@
 					</el-menu-item>
 					<el-menu-item index="photos">
 						<i class="el-icon-menu"></i>
-						<span slot="title">照片墙</span>
+						<span slot="title">首页背景</span>
 					</el-menu-item>
 					<el-menu-item index="message">
 						<i class="el-icon-menu"></i>
