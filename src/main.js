@@ -15,7 +15,7 @@ Vue.use(ElementUI);
 Vue.use(VueQuillEditor)
 
 //图片前缀
-Vue.prototype.baseUrl = "http://localhost:8089/static/uploads/" 
+Vue.prototype.baseUrl = "http://fyl.aihep.com:8089/static/uploads/" 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

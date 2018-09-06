@@ -13,7 +13,7 @@ const message = resolve=>System.import('@/components/message')
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/login',
@@ -34,3 +34,16 @@ export default new Router({
     }
   ]
 })
+
+// 路由跳转前的钩子
+router.beforeEach(function (to, from, next) {
+  let path = to.path;
+  if(path != "/login"){
+    let username = sessionStorage.getItem("username");
+    if(!username){
+      router.push('/login');
+    }
+  }
+  next()
+})
+export default router
