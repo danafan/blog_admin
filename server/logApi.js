@@ -27,7 +27,7 @@ app.get('/logList', (req, res) => {
                     res.send(response);
                 }
                 if (err) {       
-                    var response = JSON.stringify({code:1,msg:"技术分享列表获取失败"});
+                    var response = JSON.stringify({code:1,msg:"日志列表获取失败"});
                     res.send(response);
                 }    
             });
@@ -64,10 +64,12 @@ app.post('/addLog',(req, res) => {
 // 删除我的日志
 app.post('/deleteLog',(req, res) => {   
     var id = req.body.id;
-    var sql = $sql.logs.delLog;
+    var sql1 = $sql.logs.delLog;
+    var sql2 = 'delete from commentary where wid = ' + id;
+    var sqls = sql1 + ";" + sql2;
     var values = [[id]];
     //根据sql语句对数据库进行删除
-    conn.query(sql,[values],function(err,result) {   
+    conn.query(sqls,[values],function(err,result) {   
         if (result) {
             var response = JSON.stringify({code:0,msg:"删除成功"});
             res.send(response);

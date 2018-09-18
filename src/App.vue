@@ -15,8 +15,9 @@
 				//如果登录过，直接从session获取用户信息，传递到主页
 				let username = res.data.userObj.username;
 				sessionStorage.setItem("username",username);
-				this.$router.push('/index');
+				this.$router.push('/publication');
 			}else{
+				sessionStorage.removeItem("username");
 				this.$router.push('/login');
 			}
 		});

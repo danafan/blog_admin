@@ -37,11 +37,15 @@ const router = new Router({
 
 // 路由跳转前的钩子
 router.beforeEach(function (to, from, next) {
+  let username = sessionStorage.getItem("username");
   let path = to.path;
   if(path != "/login"){
-    let username = sessionStorage.getItem("username");
     if(!username){
       router.push('/login');
+    }
+  }else{
+    if(!!username){
+      router.go(-1);
     }
   }
   next()

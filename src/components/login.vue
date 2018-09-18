@@ -4,11 +4,11 @@
 		<div class="loginBack">
 			<div class="item">
 				<img class="icon" src="../assets/username.png">
-				<input type="text" placeholder="请输入用户名" v-model="username">
+				<input type="text" placeholder="请输入用户名" v-model="username" @keyup.enter="login">
 			</div>
 			<div class="item">
 				<img class="icon" src="../assets/password.png">
-				<input type="password" placeholder="请输入密码" v-model="password">
+				<input type="password" placeholder="请输入密码" v-model="password" @keyup.enter="login">
 			</div>
 			<div class="login" @click="login">登录</div>
 		</div>

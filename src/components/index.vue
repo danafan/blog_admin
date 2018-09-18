@@ -116,7 +116,6 @@
 		}
 	}
 }
-
 </style>
 <script>
 	import resource from '../api/resource.js'
@@ -128,7 +127,7 @@
 			}
 		},
 		created(){
-			this.$router.push('/' + this.active);
+			this.$router.push('/publication');
 			this.username = sessionStorage.getItem("username");
 		},
 		watch:{
@@ -147,6 +146,7 @@
 				}).then(() => {
 					resource.exit().then(res => {
 						if(res.data.code == "0"){
+							sessionStorage.clear();
 							this.$message.success("退出成功");
 							this.$router.push('/login');
 						}

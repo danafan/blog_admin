@@ -37,15 +37,15 @@ module.exports = {
 },
 dev: {
     env: require('./dev.env'),
-    port: 8080,
+    port: 8089,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
         //开发环境
         '/admin': {
-            // target: 'http://localhost:8089',
-            target: 'http://fyl.aihep.com:8089',
+            target: 'http://localhost:8089',
+            // target: 'http://fyl.aihep.com:8089',
             changeOrigin: true,
             pathRewrite: {
               '^/admin': '/admin'
