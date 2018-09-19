@@ -6,6 +6,7 @@ var path = require('path');
 var fs = require('fs');
 var UUID = require('uuid');
 var formidable = require('formidable');       //上传功能的插件
+var async = require('async');
 
 //连接数据库
 var conn = mysql.createConnection(models.mysql);
@@ -17,25 +18,29 @@ var app = express();
 app.get('/logList', (req, res) => { 
     var sql = $sql.logs.logList;
     var page = (req.query.page - 1)*5;
-    //根据sql语句对数据库进行查询
-    conn.query(sql,page,function(err, results) { 
-        if (results) {
-            let sql1 = 'select count(*) as count from logs';
-            conn.query(sql1,function(err, result) { 
-                if (result) {
-                    var response = JSON.stringify({code:0,total:result[0].count,data: results});
-                    res.send(response);
-                }
-                if (err) {       
-                    var response = JSON.stringify({code:1,msg:"日志列表获取失败"});
-                    res.send(response);
-                }    
+    var tasks = {
+        data: function(callback) {
+            conn.query(sql,page,function(err, result) {
+                callback(err, result); 
+            });
+        },
+        total: function(callback) {
+            conn.query('select count(*) from logs', function(err, result) {
+                callback(err, result[0]['count(*)']);
             });
         }
-        if (err) {       
-            var response = JSON.stringify({code:1,msg:"查询失败"});
+    };
+    async.series(tasks, function(err, results) {
+        if(err) {
+            var response = JSON.stringify({code:1,msg:"我的日志发表失败"});
             res.send(response);
-        }    
+        } else {
+            let obj = {code:0};
+            obj.total = results.total;
+            obj.data = results.data;
+            var response = JSON.stringify(obj);
+            res.send(response);
+        }
     });
 });
 
@@ -66,28 +71,41 @@ app.post('/deleteLog',(req, res) => {
     var id = req.body.id;
     var sql1 = $sql.logs.delLog;
     var sql2 = 'delete from commentary where wid = ' + id;
-    var sqls = sql1 + ";" + sql2;
-    var values = [[id]];
-    //根据sql语句对数据库进行删除
-    conn.query(sqls,[values],function(err,result) {   
-        if (result) {
-            var response = JSON.stringify({code:0,msg:"删除成功"});
-            res.send(response);
+    var tasks = [function(callback) {
+        // 开启事务
+        conn.beginTransaction(function(err) {
+            callback(err);
+        });
+    }, function(callback) {  
+        conn.query(sql1,id,function(err, result) {  
+            callback(err);  
+        });
+    }, function(callback) {
+        conn.query(sql2,id,function(err, result) { 
+            callback(err); 
+        });
+    }, function(callback) {
+        // 提交事务
+        conn.commit(function(err) {
+            callback(err);
+        });
+    }];
+    async.series(tasks, function(err, results) {
+        if(err) {
+            conn.rollback(); // 发生错误事务回滚
         }
-        if (err) {       
-            var response = JSON.stringify({code:1,msg:"删除失败"});
-            res.send(response);
-        }  
-    })
+        var response = JSON.stringify({code:0,mag:"删除成功"});
+        res.send(response);
+    });
+
 });
 
 // 我的日志详情
 app.get('/getLogDetail',(req, res) => {   
     var id = req.query.id;
     var sql = $sql.logs.logDetail;
-    var values = [[id]];
     //根据sql语句对数据库进行查询
-    conn.query(sql,[values],function(err,result) {   
+    conn.query(sql,id,function(err,result) {   
         if (result) {
             jsonWrite(res, result);
         }
@@ -111,10 +129,10 @@ app.post('/updateLog',(req, res) => {
     //根据sql语句对数据库进行查询
     conn.query(sql,values,function(err,result) {   
         if (result) {
-           var response = JSON.stringify({code:0,msg:"修改成功"});
-           res.send(response);
-       }
-       if (err) {       
+         var response = JSON.stringify({code:0,msg:"修改成功"});
+         res.send(response);
+     }
+     if (err) {       
         var response = JSON.stringify({code:1,msg:"修改失败"});
         res.send(response);
     }  

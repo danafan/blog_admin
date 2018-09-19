@@ -34,6 +34,7 @@ let path = {
 	deleteMessage: "deleteMessage",			//删除留言
 	imgList:"imgList",						//获取所有图片
 	updateImg:"updateImg",					//修改图片
+	deleteImg:"deleteImg",					//删除图片
 }
 export default{
 	//判断用户状态
@@ -171,5 +172,9 @@ export default{
 	//修改图片
 	updateImg(params){
 		return http.post(path.updateImg, params)
+	},
+	//删除图片
+	deleteImg(params){
+		return http.get(path.deleteImg, params)
 	},
 }

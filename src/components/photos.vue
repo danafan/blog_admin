@@ -208,19 +208,19 @@
 				Friday:"",
 				Saturday:"",
 				Sunday:"",
-				userimg:""
 			}
 		},
 		created(){
 			resource.imgList().then(res => {
-				this.Monday = res.data.data[0].imgurl;
-				this.Tuesday = res.data.data[1].imgurl;
-				this.Wednesday = res.data.data[2].imgurl;
-				this.Thursday = res.data.data[3].imgurl;
-				this.Friday = res.data.data[4].imgurl;
-				this.Saturday = res.data.data[5].imgurl;
-				this.Sunday = res.data.data[6].imgurl;
-				this.userimg = res.data.data[7].imgurl;
+				if(res.data.code == "0" && res.data.data.length > 0){
+					this.Monday = res.data.data[0].imgurl;
+					this.Tuesday = res.data.data[1].imgurl;
+					this.Wednesday = res.data.data[2].imgurl;
+					this.Thursday = res.data.data[3].imgurl;
+					this.Friday = res.data.data[4].imgurl;
+					this.Saturday = res.data.data[5].imgurl;
+					this.Sunday = res.data.data[6].imgurl;
+				}
 			})
 		},
 		methods:{
@@ -266,12 +266,6 @@
 				// 上传图片
 				this.uploadFn(files);
 			},
-			//周一
-			uploadFn8(){
-				let files = this.$refs.imgUpload8.files;
-				// 上传图片
-				this.uploadFn(files);
-			},
 			// 上传图片
 			uploadFn(files){
 				if (files.length > 0) {
@@ -310,9 +304,6 @@
 											case 7:
 											this.Sunday = img;
 											break;
-											case 8:
-											this.userimg = img;
-											break;
 										}
 									}else{
 										this.$message({
@@ -338,28 +329,26 @@
 				}).then(() => {
 					switch(index){
 						case 1:
-						this.Monday = "";
+						//删除图片
+						this.deleteImg(this.Monday,1);	
 						break;
 						case 2:
-						this.Tuesday = "";
+						this.deleteImg(this.Tuesday,2);
 						break;
 						case 3:
-						this.Wednesday = "";
+						this.deleteImg(this.Wednesday,3);
 						break;
 						case 4:
-						this.Thursday = "";
+						this.deleteImg(this.Thursday,4);
 						break;
 						case 5:
-						this.Friday = "";
+						this.deleteImg(this.Friday,5);
 						break;
 						case 6:
-						this.Saturday = "";
+						this.deleteImg(this.Saturday,6);
 						break;
 						case 7:
-						this.Sunday = "";
-						break;
-						case 8:
-						this.userimg = "";
+						this.deleteImg(this.Sunday,7);
 						break;
 					}
 				}).catch(() => {
@@ -367,6 +356,41 @@
 						type: 'info',
 						message: '已取消删除'
 					});          
+				});
+			},
+			//删除图片
+			deleteImg(imgUrl,index){
+				resource.deleteImg({imgurl:imgUrl}).then(res => {
+					if(res.data.code == "0"){
+						switch(index){
+							case 1:
+							this.Monday = "";
+							break;
+							case 2:
+							this.Tuesday = "";
+							break;
+							case 3:
+							this.Wednesday = "";
+							break;
+							case 4:
+							this.Thursday = "";
+							break;
+							case 5:
+							this.Friday = "";
+							break;
+							case 6:
+							this.Saturday = "";
+							break;
+							case 7:
+							this.Sunday = "";
+							break;
+						}
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'warning'
+						});
+					}
 				});
 			}
 

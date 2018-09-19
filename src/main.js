@@ -12,10 +12,11 @@ import 'quill/dist/quill.bubble.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
-Vue.use(VueQuillEditor)
+Vue.use(VueQuillEditor);
 
 //图片前缀
-Vue.prototype.baseUrl = "http://fyl.aihep.com:8089/static/uploads/" 
+Vue.prototype.baseUrl = "http://admin.ranbol.com/static/uploads/" 
+// Vue.prototype.baseUrl = "http://http://localhost:8089/static/uploads/" 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

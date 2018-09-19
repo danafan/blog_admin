@@ -54,7 +54,7 @@
 				<div class="showimg" v-if="showImg != ''" @mouseenter="showDetele = true" @mouseleave="showDetele = false">
 					<img class="img" :src="baseUrl + showImg">
 					<div class="modal" v-if="showDetele == true">
-						<img src="../assets/detele.png" @click="detele">
+						<img src="../assets/detele.png" @click="detele(showImg)">
 					</div>
 				</div>
 				<uploadimg @callbackFn="callbackFn" v-else></uploadimg>
@@ -292,8 +292,17 @@
 				this.showImg = val;
 			},
 			//点击删除图片
-			detele(){
-				this.showImg = "";					//清空预览的图片
+			detele(showImg){
+				resource.deleteImg({imgurl:showImg}).then(res => {
+					if(res.data.code == "0"){
+						this.showImg = "";					//清空预览的图片
+					}else{
+						this.$message({
+							message: res.data.msg,
+							type: 'warning'
+						});
+					}
+				});
 			},
 			//点击草稿立即发表
 			publication(){
