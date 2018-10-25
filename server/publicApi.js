@@ -29,7 +29,7 @@ app.post('/uploadImg',(req, res) => {
         var uuid = UUID.v1();
         var newname = uuid + imgObj.name;
         var newpath = '../dist/static/uploads/' + newname;
-        // //修改服务器内图片名并上传
+        //修改服务器内图片名并上传
         fs.rename(oldpath,newpath,(err)=>{
             if(err){
                 var response = JSON.stringify({code:1,msg:"图片上传失败"});

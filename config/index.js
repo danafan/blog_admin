@@ -44,8 +44,8 @@ dev: {
     proxyTable: {
         //开发环境
         '/admin': {
-            target: 'http://localhost:8089',
-            // target: 'http://admin.ranbol.com',
+            // target: 'http://localhost:8089',
+            target: 'http://admin.ranbol.com',
             changeOrigin: true,
             pathRewrite: {
               '^/admin': '/admin'
